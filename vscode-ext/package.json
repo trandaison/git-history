@@ -38,9 +38,11 @@
     ]
   },
   "scripts": {
-    "build-site": "cd .. && cross-env PUBLIC_URL=. REACT_APP_GIT_PROVIDER=vscode yarn build && rm -fr vscode-ext/site/ && cp -r build/ vscode-ext/site/",
+    "build-site": "cd .. && cross-env NODE_OPTIONS=--openssl-legacy-provider PUBLIC_URL=. REACT_APP_GIT_PROVIDER=vscode yarn build && rm -fr vscode-ext/site/ && cp -r build/ vscode-ext/site/",
     "build": " yarn build-site",
-    "postinstall": "node ./node_modules/vscode/bin/install",
+    "watch-site": "chokidar \"../src/**/*\" \"../public/**/*\" \"../craco.config.js\" -i \"../build/**/*\" -c \"yarn build-site\"",
+    "dev-site": "yarn build-site && yarn watch-site",
+    "postinstall": "node ./scripts/postinstall.js",
     "test": "node ./node_modules/vscode/bin/test",
     "vscode:prepublish": "yarn build"
   },
@@ -53,6 +55,7 @@
     "vscode": "^1.1.28"
   },
   "dependencies": {
+    "chokidar-cli": "^3.0.0",
     "execa": "^1.0.0"
   }
 }

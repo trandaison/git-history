@@ -43,11 +43,11 @@ function Slide({ lines, styles, changes }) {
       style={{
         backgroundColor: theme.plain.backgroundColor,
         color: theme.plain.color,
-        paddingTop: "100px",
+        paddingTop: '100px',
         margin: 0,
-        height: "100%",
-        width: "100%",
-        boxSizing: "border-box"
+        height: '100%',
+        width: '100%',
+        boxSizing: 'border-box',
       }}
     >
       <Scroller

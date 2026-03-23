@@ -2,28 +2,35 @@ import React, { useEffect, useState } from "react";
 import useSpring from "react-use/lib/useSpring";
 import Swipeable from "react-swipeable";
 import Slide from "./slide";
+import { TimeLabel } from './timelabel';
 import "./comment-box.css";
 
 function CommitInfo({ commit, move, onClick }) {
   const message = commit.message.split("\n")[0].slice(0, 80);
   const isActive = Math.abs(move) < 0.5;
+  const formater = Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    year: 'numeric',
+    day: 'numeric',
+  });
+
   return (
     <div
       style={{
-        position: "absolute",
-        left: "50%",
+        position: 'absolute',
+        left: '50%',
         transform: `translateX(-50%) translateX(${250 * move}px)`,
         opacity: 1 / (1 + Math.min(0.8, Math.abs(move))),
-        zIndex: !isActive && 2
+        zIndex: !isActive && 2,
       }}
     >
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          cursor: "pointer",
-          padding: "5px 0 15px"
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          padding: '5px 0 15px',
         }}
         onClick={onClick}
       >
@@ -33,36 +40,42 @@ function CommitInfo({ commit, move, onClick }) {
             alt={commit.author.login}
             height={40}
             width={40}
-            style={{ borderRadius: "4px" }}
+            style={{ borderRadius: '4px' }}
           />
         )}
-        <div style={{ paddingLeft: "6px" }}>
-          <div style={{ fontSize: "1.1rem", fontWeight: "500" }}>
+        <div style={{ paddingLeft: '6px' }}>
+          <div style={{ fontSize: '1.1rem', fontWeight: '500' }}>
             {commit.author.login}
           </div>
-          <div style={{ fontSize: "0.85rem", opacity: "0.9" }}>
+          <div style={{ fontSize: '0.85rem', opacity: '0.9' }}>
             {isActive && commit.commitUrl ? (
-              <a
-                href={commit.commitUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                on {commit.date.toDateString()}
-              </a>
+              <>
+                {commit.hash} •&nbsp;
+                <a
+                  href={commit.commitUrl}
+                  target='_blank'
+                  title={commit.date.toLocaleString()}
+                  rel='noopener noreferrer'
+                >
+                  on {formater.format(commit.date)}
+                </a>
+              </>
             ) : (
-              `on ${commit.date.toDateString()}`
+              <>
+                {commit.hash} • <TimeLabel date={commit.date} />
+              </>
             )}
           </div>
         </div>
       </div>
       {isActive && (
         <div
-          className="comment-box"
+          className='comment-box'
           title={commit.message}
           style={{ opacity: 1 - 2 * Math.abs(move) }}
         >
           {message}
-          {message !== commit.message ? " ..." : ""}
+          {message !== commit.message ? ' ...' : ''}
         </div>
       )}
     </div>

@@ -146,29 +146,28 @@ export default function Scroller({
   return (
     <div
       style={{
-        height: "100%",
-        overflowY: "auto",
-        overflowX: "hidden"
+        height: '100%',
+        overflowY: 'auto',
+        overflowX: 'hidden',
       }}
-      className="scroller"
+      className='scroller'
       ref={ref}
-      onScroll={e => {
+      onScroll={(e) => {
         const newTop = e.target.scrollTop;
         if (newTop === top) {
           return;
         }
-        dispatch({ type: "manual-scroll", newTop });
+        dispatch({ type: 'manual-scroll', newTop });
       }}
     >
       <code
         style={{
-          display: "block",
-          width: "calc(100% - 20px)",
-          maxWidth: "900px",
-          margin: "auto",
-          padding: "10px",
-          boxSizing: "border-box",
-          height: "100%"
+          display: 'block',
+          width: 'calc(100% - 20px)',
+          maxWidth: '1200px',
+          margin: 'auto',
+          padding: '10px',
+          boxSizing: 'border-box',
         }}
         children={children}
       />
