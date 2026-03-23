@@ -1,79 +1,106 @@
-<div align="center">
-<a href="https://github.githistory.xyz/torvalds/linux/blob/master/kernel/up.c">
-<img alt="demo" src="https://user-images.githubusercontent.com/1911623/54575634-9b10b000-49d3-11e9-8a19-56e40636e45d.gif" width="600" />
-</a>
-</div>
+# Git File History (Fork)
 
-# [Git History](https://githistory.xyz)
+Fork của dự án `git-history`, tập trung vào trải nghiệm xem lịch sử file nhanh, trực quan và dễ mở rộng cho nhu cầu cá nhân.
 
-Quickly browse the history of files in any git repo:
+Repository: [https://github.com/trandaison/git-history](https://github.com/trandaison/git-history)
 
-1. Go to a file in **GitHub** (or **GitLab**, or **Bitbucket**)
-1. Replace `github.com` with `github.githistory.xyz`
-1. There's no step three
+## Tính năng chính
 
-[Try it](https://github.githistory.xyz/babel/babel/blob/master/packages/babel-core/test/browserify.js)
+- Xem lịch sử commit theo từng file với timeline trực quan
+- So sánh nội dung file theo từng mốc commit
+- Hỗ trợ luồng local qua VS Code Extension
+- Tái sử dụng cùng codebase UI cho cả web và extension
 
-> If you like this project consider [backing my open source work on Patreon!](https://patreon.com/pomber)  
-> And follow [@pomber](https://twitter.com/pomber) on twitter for updates.
+## Cấu trúc repo
 
-## Extensions
+- `src/`: giao diện React và logic hiển thị history/diff
+- `public/`: static assets cho web app
+- `vscode-ext/`: VS Code extension host + webview bundle
+- `vscode-ext/site/`: output build để extension nhúng vào webview
 
-### Browsers
+## Yêu cầu môi trường
 
-You can also add an `Open in Git History` button to GitHub, GitLab and Bitbucket with the [Chrome](https://chrome.google.com/webstore/detail/github-history-browser-ex/laghnmifffncfonaoffcndocllegejnf) and [Firefox](https://addons.mozilla.org/firefox/addon/github-history/) extensions.
+- Node.js (khuyến nghị Node 18+)
+- Yarn 1.x
+- Git CLI
+- VS Code (nếu phát triển extension)
 
-<details><summary>Or you can use a bookmarklet.</summary>
+## Chạy local để development
 
-```javascript
-javascript: (function() {
-  var url = window.location.href;
-  var regEx = /^(https?\:\/\/)(www\.)?(github|gitlab|bitbucket)\.(com|org)\/(.*)$/i;
-  if (regEx.test(url)) {
-    url = url.replace(regEx, "$1$3.githistory.xyz/$5");
-    window.open(url, "_blank");
-  } else {
-    alert("Not a Git File URL");
-  }
-})();
+### 1) Clone và cài dependencies
+
+```bash
+git clone https://github.com/trandaison/git-history.git
+cd git-history
+yarn
+cd vscode-ext && yarn
 ```
 
-</details>
+### 2) Chạy web app local
 
-### Local Repos
+Từ thư mục root:
 
-You can use Git History for local git repos with the [CLI](https://github.com/pomber/git-history/tree/master/cli) or with the [VS Code extension](https://marketplace.visualstudio.com/items?itemName=pomber.git-file-history).
+```bash
+yarn start
+```
 
-## Support Git History
+Web app sẽ chạy ở local dev server (mặc định `http://localhost:3000`).
 
-### Sponsors
+### 3) Build webview cho VS Code extension
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/git-history#sponsor)]
+Từ thư mục `vscode-ext/`:
 
-<a href="https://github.com/selefra/selefra" target="_blank"><img src="https://github.com/selefra.png" style="border-radius: 50%" alt="selefra" title="Selefra" width="100"></a>
+```bash
+yarn build
+```
 
-<a href="https://opencollective.com/git-history/sponsor/0/website" target="_blank"><img src="https://opencollective.com/git-history/sponsor/0/avatar.svg"></a>
+Lệnh này sẽ build UI ở root với provider cho VS Code, rồi copy output sang `vscode-ext/site/`.
 
-### Backers
+### 4) Dev extension với chế độ watch
 
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/git-history#backer)]
+Từ `vscode-ext/`:
 
-<a href="https://opencollective.com/git-history#backers" target="_blank"><img src="https://opencollective.com/git-history/backers.svg?width=890"></a>
+```bash
+yarn dev-site
+```
 
-### Thanks
+Script sẽ theo dõi thay đổi ở `src/`, `public/`, `craco.config.js` và tự build lại webview site.
 
-<p>Browser testing via <a href="https://www.lambdatest.com/" target="_blank"><picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://www.lambdatest.com/resources/images/logo-white.svg">
-  <img alt="LambdaTest" src="https://www.lambdatest.com/resources/images/logos/logo.svg" style="vertical-align: middle;margin-left:5px" width="147" height="26" >
-</picture></a></p>
+### 5) Debug extension trong VS Code
 
-### Credits
+- Mở thư mục `vscode-ext` bằng VS Code
+- Nhấn `F5` (launch config `Extension`)
+- Trong cửa sổ Extension Development Host, mở 1 file thuộc git repo
+- Mở Command Palette và chạy command `Git File History`
 
-Based on these amazing projects:
+## Đóng gói và publish VS Code extension
 
-- [Prism](https://github.com/PrismJS/prism) by [Lea Verou](https://twitter.com/leaverou)
-- [jsdiff](https://github.com/kpdecker/jsdiff) by [Kevin Decker](https://twitter.com/kpdecker)
-- [Night Owl](https://github.com/sdras/night-owl-vscode-theme) by [Sarah Drasner](https://twitter.com/sarah_edo)
+Từ `vscode-ext/`:
+
+```bash
+npx @vscode/vsce package
+```
+
+Định danh extension theo Marketplace format:
+
+- `publisher`: `trandaison`
+- `name`: `git-file-history`
+- Extension ID: `trandaison.git-file-history`
+
+## Scripts chính
+
+### Root
+
+- `yarn start`: chạy web app local
+- `yarn build`: build web app production
+- `yarn test`: chạy test
+
+### vscode-ext
+
+- `yarn build`: build webview site cho extension
+- `yarn dev-site`: watch và rebuild webview site
+- `yarn test`: chạy extension test
+- `yarn vscode:prepublish`: build trước khi publish
 
 ## License
 
